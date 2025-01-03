@@ -1,0 +1,41 @@
+package com.arnatech.jadwalshalat.utils
+
+import com.batoulapps.adhan2.CalculationMethod
+import com.batoulapps.adhan2.CalculationParameters
+import com.batoulapps.adhan2.Coordinates
+import com.batoulapps.adhan2.PrayerTimes
+import com.batoulapps.adhan2.data.DateComponents
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+
+class PrayerTimesHelper {
+
+    fun getPrayerTimes(): PrayerTimes {
+        val coordinates = Coordinates(-6.946127, 107.703734) // Latitude, Longitude
+        val params: CalculationParameters = CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
+
+        val currentDate = Instant.parse(Clock.System.now().toString())
+        val date = DateComponents.from(currentDate)
+
+        return PrayerTimes(coordinates, date, params)
+    }
+
+    fun formatPrayerTime(prayerTime: Instant?): String {
+        return try {
+            if (prayerTime != null) {
+                val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+                formatter.format(Date(prayerTime.toEpochMilliseconds()))
+            } else {
+                "Waktu tidak tersedia"
+            }
+        } catch (e: Exception) {
+            "Error: ${e.message}"
+        }
+    }
+
+}

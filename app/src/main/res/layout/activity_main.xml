@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_browse_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="MergeRootFrame">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Bagian Kiri -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/border_bottom_right"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="14dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="14dp"
+                    android:src="@drawable/vector" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mosque_name"
+                        android:textColor="#333"
+                        android:textFontWeight="800"
+                        android:textSize="26.33sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/location"
+                        android:textColor="#333"
+                        android:textFontWeight="400"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/white"
+                    android:paddingHorizontal="24dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="14dp"
+                        android:src="@drawable/ic_clock"/>
+
+                    <TextView
+                        android:id="@+id/timeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textSize="40sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:text="00:00:00" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="26dp"
+                    android:background="@drawable/border_bottom_left"
+                    android:textFontWeight="700"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="end"
+            android:paddingEnd="14dp"
+            android:descendantFocusability="beforeDescendants">
+            <ImageView
+                android:id="@+id/settings_button"
+                android:src="@drawable/setting_ic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="229dp"
+            android:layout_marginHorizontal="24dp"
+            android:gravity="end|bottom"
+            android:padding="14dp">
+
+            <!-- Countdown Timer -->
+            <LinearLayout
+                android:id="@+id/countdown_container"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/card_container"
+                android:layout_marginTop="84dp"
+                android:background="@drawable/countdown_background"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="3dp"
+                    android:src="@drawable/ic_countdown" />
+
+                <TextView
+                    android:id="@+id/countdownText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="00:00:00"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Card Container -->
+            <LinearLayout
+                android:id="@+id/card_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/white_background_with_shadow"
+                android:orientation="horizontal">
+                <!-- Subuh -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/white_background_with_shadow">
+
+                    <LinearLayout
+                        android:id="@+id/fajr_time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/fajr_bacground"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:text="Subuh"
+                            android:textColor="@color/white"
+                            android:textFontWeight="600"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/fajr_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="04:01"
+                            android:textColor="@color/white"
+                            android:textSize="46sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dzuhur_time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:text="Dzuhur"
+                            android:textColor="@color/black"
+                            android:textFontWeight="600"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/dzuhur_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="04:01"
+                            android:textColor="@color/black"
+                            android:textSize="46sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/asr_time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:text="Ashar"
+                            android:textColor="@color/black"
+                            android:textFontWeight="600"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/asr_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="04:01"
+                            android:textColor="@color/black"
+                            android:textSize="46sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/maghrib_time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:text="Maghrib"
+                            android:textColor="@color/black"
+                            android:textFontWeight="600"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/maghrib_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="04:01"
+                            android:textColor="@color/black"
+                            android:textSize="46sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/isha_time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:text="Isya"
+                            android:textColor="@color/black"
+                            android:textFontWeight="600"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/isha_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="04:01"
+                            android:textColor="@color/black"
+                            android:textSize="46sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_below="@id/card_container"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/running_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorPrimaryDark"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:padding="8dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="Jadwal sholat hari ini: Subuh 04:01, Dzuhur 12:01, Ashar 15:24, Maghrib 18:15, Isya 19:30"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</FrameLayout>

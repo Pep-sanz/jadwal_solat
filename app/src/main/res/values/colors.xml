@@ -1,0 +1,33 @@
+<resources>
+    <color name="primary">#073C4C</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#333333</color>
+    <color name="search_opaque">#ffaa3f</color>
+    <color name="selected_background">#ffaa3f</color>
+    <color name="default_background">#3d3d3d</color>
+
+    <!--cyan theme color-->
+    <color name="cyan_primary">#17667E</color>
+    <color name="cyan_secondary">#083A49</color>
+    <color name="cyan_background">#012834</color>
+
+    <!--red theme color-->
+    <color name="red_primary">#A01515</color>
+    <color name="red_secondary">#4C0707</color>
+    <color name="red_background">#380606</color>
+
+    <!--red theme color-->
+    <color name="green_primary">#2DA115</color>
+    <color name="green_secondary">#19620A</color>
+    <color name="green_background">#154E0B</color>"
+
+    <!--yellow theme color-->
+    <color name="yellow_primary">#AB8713</color>
+    <color name="yellow_secondary">#6B540A</color>
+    <color name="yellow_background">#54430B</color>"
+
+    <!--blue theme color-->
+    <color name="blue_primary">#1F4AD4</color>
+    <color name="blue_secondary">#0A216B</color>
+    <color name="blue_background">#0C1D53</color>"
+</resources>
