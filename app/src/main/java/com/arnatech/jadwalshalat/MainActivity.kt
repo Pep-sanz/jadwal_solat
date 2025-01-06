@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
@@ -33,6 +34,23 @@ class MainActivity : FragmentActivity() {
     private lateinit var countdownTextView: TextView
     private lateinit var countdownContainer: View
     private lateinit var prayerTimesHelper: PrayerTimesHelper
+    private lateinit var fajrLayout: LinearLayout
+    private lateinit var dhuhrLayout: LinearLayout
+    private lateinit var asrLayout: LinearLayout
+    private lateinit var maghribLayout: LinearLayout
+    private lateinit var ishaLayout: LinearLayout
+    private lateinit var fajrTextView: TextView
+    //text prayer time name
+    private lateinit var dhuhrTextView: TextView
+    private lateinit var asrTextView: TextView
+    private lateinit var maghribTextView: TextView
+    private lateinit var ishaTextView: TextView
+    //text prayer time
+    private lateinit var fajrTimeTextView: TextView
+    private lateinit var dhuhrTimeTextView: TextView
+    private lateinit var asrTimeTextView: TextView
+    private lateinit var maghribTimeTextView: TextView
+    private lateinit var ishaTimeTextView: TextView
 
     private lateinit var sharedPreferences: SharedPreferences
     private val clockHandler = Handler(Looper.getMainLooper())
@@ -45,6 +63,26 @@ class MainActivity : FragmentActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        fajrLayout = findViewById(R.id.fajr_time_layout)
+        dhuhrLayout = findViewById(R.id.dzuhur_time_layout)
+        asrLayout = findViewById(R.id.asr_time_layout)
+        maghribLayout = findViewById(R.id.maghrib_time_layout)
+        ishaLayout = findViewById(R.id.isha_time_layout)
+
+        //text prayer time name
+        fajrTextView = findViewById(R.id.fajr_time_text)
+        dhuhrTextView= findViewById(R.id.dzuhur_time_text)
+        asrTimeTextView = findViewById(R.id.asr_time_text)
+        maghribTimeTextView = findViewById(R.id.maghrib_time_text)
+        ishaTimeTextView = findViewById(R.id.isha_time_text)
+
+        //text prayer time
+        fajrTimeTextView= findViewById(R.id.fajr_time)
+        dhuhrTimeTextView = findViewById(R.id.dzuhur_time)
+        asrTimeTextView = findViewById(R.id.asr_time)
+        maghribTimeTextView = findViewById(R.id.maghrib_time)
+        ishaTimeTextView = findViewById(R.id.isha_time)
 
         countdownTextView = findViewById(R.id.countdownText)
         countdownContainer = findViewById(R.id.countdown_container)
@@ -64,11 +102,6 @@ class MainActivity : FragmentActivity() {
 
         timeTextView = findViewById(R.id.timeTextView)
 
-        val fajrTimeUi = findViewById<TextView>(R.id.fajr_time)
-        val dhuhrTimeUi = findViewById<TextView>(R.id.dzuhur_time)
-        val asrTimeUi = findViewById<TextView>(R.id.asr_time)
-        val maghribTimeUi = findViewById<TextView>(R.id.maghrib_time)
-        val ishaTimeUi = findViewById<TextView>(R.id.isha_time)
 
         val fajrTime = prayerTimesHelper.formatPrayerTime(prayerTimes.fajr)
         val dhuhrTime = prayerTimesHelper.formatPrayerTime(prayerTimes.dhuhr)
@@ -76,11 +109,11 @@ class MainActivity : FragmentActivity() {
         val maghribTime = prayerTimesHelper.formatPrayerTime(prayerTimes.maghrib)
         val ishaTime = prayerTimesHelper.formatPrayerTime(prayerTimes.isha)
 
-        fajrTimeUi.text = fajrTime
-        dhuhrTimeUi.text = dhuhrTime
-        asrTimeUi.text = asrTime
-        maghribTimeUi.text = maghribTime
-        ishaTimeUi.text = ishaTime
+        fajrTimeTextView.text = fajrTime
+        dhuhrTimeTextView.text = dhuhrTime
+        asrTimeTextView.text = asrTime
+        maghribTimeTextView.text = maghribTime
+        ishaTimeTextView.text = ishaTime
 
         val runningText = findViewById<TextView>(R.id.running_text)
         val hadisList = getHadis(this)
@@ -135,16 +168,39 @@ class MainActivity : FragmentActivity() {
         val now = Clock.System.now()
 
         val nextPrayerTime = when {
-            now < prayerTimes.fajr -> prayerTimes.fajr
-            now < prayerTimes.dhuhr -> prayerTimes.dhuhr
-            now < prayerTimes.asr -> prayerTimes.asr
-            now < prayerTimes.maghrib -> prayerTimes.maghrib
-            now < prayerTimes.isha -> prayerTimes.isha
-            else -> prayerTimes.fajr.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault())
+            now < prayerTimes.fajr -> {
+                highlightPrayerTime(fajrLayout)
+                prayerTimes.fajr
+            }
+            now < prayerTimes.dhuhr -> {
+                highlightPrayerTime(dhuhrLayout)
+                prayerTimes.dhuhr
+            }
+            now < prayerTimes.asr -> {
+                highlightPrayerTime(asrLayout)
+                prayerTimes.asr
+            }
+            now < prayerTimes.maghrib -> {
+                highlightPrayerTime(maghribLayout)
+                prayerTimes.maghrib
+            }
+            now < prayerTimes.isha -> {
+                highlightPrayerTime(ishaLayout)
+                prayerTimes.isha
+            }
+            else -> {
+                highlightPrayerTime(fajrLayout)
+                prayerTimes.fajr.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault())
+            }
         }
 
         val remainingMillis = nextPrayerTime.toEpochMilliseconds() - now.toEpochMilliseconds()
         startCountdown(remainingMillis)
+    }
+
+    private fun highlightPrayerTime(activeLayout: LinearLayout,) {
+        // Ubah warna layout aktif
+        activeLayout.setBackgroundResource(R.drawable.fajr_bacground)
     }
 
     private var countdownTimer: CountDownTimer? = null
