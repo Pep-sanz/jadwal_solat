@@ -10,12 +10,14 @@ import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 
 class PrayerTimesHelper {
 
     fun getPrayerTimes(): PrayerTimes {
-        val coordinates = Coordinates(-6.946127, 107.703734) // Latitude, Longitude
+//        val coordinates = Coordinates(-6.946127, 107.703734) // Latitude, Longitude
+        val coordinates = Coordinates(-7.2069093,107.8767993) // Latitude, Longitude
         val params: CalculationParameters = CalculationMethod.MUSLIM_WORLD_LEAGUE.parameters
 
         val currentDate = Instant.parse(Clock.System.now().toString())
@@ -28,7 +30,7 @@ class PrayerTimesHelper {
         return try {
             if (prayerTime != null) {
                 val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-
+                formatter.timeZone = TimeZone.getTimeZone("GMT+7")
                 formatter.format(Date(prayerTime.toEpochMilliseconds()))
             } else {
                 "Waktu tidak tersedia"
