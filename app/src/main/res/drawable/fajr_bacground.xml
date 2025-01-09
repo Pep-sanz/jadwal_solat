@@ -4,6 +4,11 @@
         android:startColor="?attr/colorPrimaryDark"
         android:endColor="?attr/colorPrimary"
         android:angle="-45" />
+    <corners
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp"
+        android:topLeftRadius="0dp"
+        android:topRightRadius="0dp"/>
 </shape>
 
 
