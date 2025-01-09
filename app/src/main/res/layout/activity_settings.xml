@@ -49,56 +49,116 @@
                android:layout_marginTop="16dp"
                android:gravity="center"
                android:orientation="horizontal">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="14dp">
+                    <Button
+                        android:id="@+id/cyan_theme"
+                        android:layout_width="36dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="@color/cyan_primary"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:contentDescription="Cyan Theme" />
+                    <ImageView
+                        android:id="@+id/check_icon_cyan_theme"
+                        android:layout_width="18dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:elevation="2dp"
+                        android:visibility="invisible"
+                        android:src="@drawable/baseline_check" />
+                </FrameLayout>
 
-               <Button
-                   android:id="@+id/cyan_theme"
-                   android:layout_width="36dp"
-                   android:layout_height="32dp"
-                   android:layout_marginRight="14dp"
-                   android:backgroundTint="@color/cyan_primary"
-                   android:focusable="true"
-                   android:focusableInTouchMode="true"
-                   android:contentDescription="Cyan Theme" />
+               <FrameLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_marginEnd="14dp">
+                   <Button
+                       android:id="@+id/red_theme"
+                       android:layout_width="36dp"
+                       android:layout_height="32dp"
+                       android:backgroundTint="@color/red_primary"
+                       android:focusable="true"
+                       android:focusableInTouchMode="true"
+                       android:contentDescription="Red Theme" />
+                   <ImageView
+                       android:id="@+id/check_icon_red_theme"
+                       android:layout_width="18dp"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:elevation="2dp"
+                       android:visibility="invisible"
+                       android:src="@drawable/baseline_check" />
+               </FrameLayout>
 
-               <Button
-                   android:id="@+id/red_theme"
-                   android:layout_width="36dp"
-                   android:layout_height="32dp"
-                   android:layout_marginRight="14dp"
-                   android:backgroundTint="@color/red_primary"
-                   android:focusable="true"
-                   android:focusableInTouchMode="true"
-                   android:contentDescription="Red Theme" />
+               <FrameLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_marginEnd="14dp">
+                   <Button
+                       android:id="@+id/green_theme"
+                       android:layout_width="36dp"
+                       android:layout_height="32dp"
+                       android:backgroundTint="@color/green_primary"
+                       android:focusable="true"
+                       android:focusableInTouchMode="true"
+                       android:contentDescription="Green Theme" />
+                   <ImageView
+                       android:id="@+id/check_icon_green_theme"
+                       android:layout_width="18dp"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:elevation="2dp"
+                       android:visibility="invisible"
+                       android:src="@drawable/baseline_check" />
+               </FrameLayout>
 
-               <Button
-                   android:id="@+id/green_theme"
-                   android:layout_width="36dp"
-                   android:layout_height="32dp"
-                   android:layout_marginRight="14dp"
-                   android:backgroundTint="@color/green_primary"
-                   android:focusable="true"
-                   android:focusableInTouchMode="true"
-                   android:contentDescription="Green Theme" />
+               <FrameLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_marginEnd="14dp">
+                   <Button
+                       android:id="@+id/yellow_theme"
+                       android:layout_width="36dp"
+                       android:layout_height="32dp"
+                       android:backgroundTint="@color/yellow_primary"
+                       android:focusable="true"
+                       android:focusableInTouchMode="true"
+                       android:contentDescription="Yellow Theme" />
+                   <ImageView
+                       android:id="@+id/check_icon_yellow_theme"
+                       android:layout_width="18dp"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:elevation="2dp"
+                       android:visibility="invisible"
+                       android:src="@drawable/baseline_check" />
+               </FrameLayout>
 
-               <Button
-                   android:id="@+id/yellow_theme"
-                   android:layout_width="36dp"
-                   android:layout_height="32dp"
-                   android:layout_marginRight="14dp"
-                   android:backgroundTint="@color/yellow_primary"
-                   android:focusable="true"
-                   android:focusableInTouchMode="true"
-                   android:contentDescription="Yellow Theme" />
+               <FrameLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+                   android:layout_marginEnd="14dp">
+                   <Button
+                       android:id="@+id/blue_theme"
+                       android:layout_width="36dp"
+                       android:layout_height="32dp"
+                       android:backgroundTint="@color/blue_primary"
+                       android:focusable="true"
+                       android:focusableInTouchMode="true"
+                       android:contentDescription="Blue Theme" />
 
-               <Button
-                   android:id="@+id/blue_theme"
-                   android:layout_width="36dp"
-                   android:layout_height="32dp"
-                   android:layout_marginRight="14dp"
-                   android:backgroundTint="@color/blue_primary"
-                   android:focusable="true"
-                   android:focusableInTouchMode="true"
-                   android:contentDescription="Blue Theme" />
+                   <ImageView
+                       android:id="@+id/check_icon_blue_theme"
+                       android:layout_width="18dp"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:elevation="2dp"
+                       android:visibility="invisible"
+                       android:src="@drawable/baseline_check" />
+               </FrameLayout>
 
            </LinearLayout>
 
