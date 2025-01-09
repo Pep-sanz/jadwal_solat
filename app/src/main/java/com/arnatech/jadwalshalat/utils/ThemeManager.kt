@@ -12,9 +12,14 @@ object ThemeManager {
         preferences.edit().putString(KEY_THEME, theme).apply()
     }
 
-    fun applyTheme(context: Context) {
+    fun getTheme(context: Context): String? {
         val preferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val theme = preferences.getString(KEY_THEME, "cyan") // Default tema: "cyan"
+        return theme
+    }
+
+    fun applyTheme(context: Context) {
+        val theme = getTheme(context)
 
         when (theme) {
             "cyan" -> context.setTheme(R.style.AppTheme_Cyan)
