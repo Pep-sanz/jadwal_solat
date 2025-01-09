@@ -3,25 +3,25 @@ package com.arnatech.jadwalshalat
 import ImageSliderAdapter
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.arnatech.jadwalshalat.utils.CountdownHelper
+import com.arnatech.jadwalshalat.models.NextPrayerTime
 import com.arnatech.jadwalshalat.utils.PrayerTimesHelper
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import getHadis
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import java.text.SimpleDateFormat
+import java.util.TimeZone as TimeZoneJv
 import java.util.*
 
 class MainActivity : FragmentActivity() {
@@ -30,27 +30,48 @@ class MainActivity : FragmentActivity() {
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
     private var currentPosition = 0
+
     private lateinit var timeTextView: TextView
-    private lateinit var countdownTextView: TextView
-    private lateinit var countdownContainer: View
+
+    private lateinit var fajrCountdownContainer: View
+    private lateinit var dhuhrCountdownContainer: View
+    private lateinit var asrCountdownContainer: View
+    private lateinit var maghribCountdownContainer: View
+    private lateinit var ishaCountdownContainer: View
+
+    private lateinit var fajrCountdownTextView: TextView
+    private lateinit var dhuhrCountdownTextView: TextView
+    private lateinit var asrCountdownTextView: TextView
+    private lateinit var maghribCountdownTextView: TextView
+    private lateinit var ishaCountdownTextView: TextView
+
     private lateinit var prayerTimesHelper: PrayerTimesHelper
+
     private lateinit var fajrLayout: LinearLayout
     private lateinit var dhuhrLayout: LinearLayout
     private lateinit var asrLayout: LinearLayout
     private lateinit var maghribLayout: LinearLayout
     private lateinit var ishaLayout: LinearLayout
-    private lateinit var fajrTextView: TextView
+
+    private lateinit var itemFajrTimeLayout: LinearLayout
+    private lateinit var itemDhuhrTimeLayout: LinearLayout
+    private lateinit var itemAsrTimeLayout: LinearLayout
+    private lateinit var itemMaghribTimeLayout: LinearLayout
+    private lateinit var itemIshaTimeLayout: LinearLayout
+
     //text prayer time name
-    private lateinit var dhuhrTextView: TextView
-    private lateinit var asrTextView: TextView
-    private lateinit var maghribTextView: TextView
-    private lateinit var ishaTextView: TextView
-    //text prayer time
     private lateinit var fajrTimeTextView: TextView
     private lateinit var dhuhrTimeTextView: TextView
     private lateinit var asrTimeTextView: TextView
     private lateinit var maghribTimeTextView: TextView
     private lateinit var ishaTimeTextView: TextView
+
+    //text prayer time
+    private lateinit var fajrTimeView: TextView
+    private lateinit var dhuhrTimeView: TextView
+    private lateinit var asrTimeView: TextView
+    private lateinit var maghribTimeView: TextView
+    private lateinit var ishaTimeView: TextView
 
     private lateinit var sharedPreferences: SharedPreferences
     private val clockHandler = Handler(Looper.getMainLooper())
@@ -70,30 +91,48 @@ class MainActivity : FragmentActivity() {
         maghribLayout = findViewById(R.id.maghrib_time_layout)
         ishaLayout = findViewById(R.id.isha_time_layout)
 
+        itemFajrTimeLayout = findViewById(R.id.item_fajr_time_layout)
+        itemDhuhrTimeLayout = findViewById(R.id.item_dzuhur_time_layout)
+        itemAsrTimeLayout = findViewById(R.id.item_asr_time_layout)
+        itemMaghribTimeLayout = findViewById(R.id.item_maghrib_time_layout)
+        itemIshaTimeLayout = findViewById(R.id.item_isha_time_layout)
+
         //text prayer time name
-        fajrTextView = findViewById(R.id.fajr_time_text)
-        dhuhrTextView= findViewById(R.id.dzuhur_time_text)
+        fajrTimeTextView= findViewById(R.id.fajr_time_text)
+        dhuhrTimeTextView = findViewById(R.id.dzuhur_time_text)
         asrTimeTextView = findViewById(R.id.asr_time_text)
         maghribTimeTextView = findViewById(R.id.maghrib_time_text)
         ishaTimeTextView = findViewById(R.id.isha_time_text)
 
         //text prayer time
-        fajrTimeTextView= findViewById(R.id.fajr_time)
-        dhuhrTimeTextView = findViewById(R.id.dzuhur_time)
-        asrTimeTextView = findViewById(R.id.asr_time)
-        maghribTimeTextView = findViewById(R.id.maghrib_time)
-        ishaTimeTextView = findViewById(R.id.isha_time)
+        fajrTimeView = findViewById(R.id.fajr_time)
+        dhuhrTimeView= findViewById(R.id.dzuhur_time)
+        asrTimeView = findViewById(R.id.asr_time)
+        maghribTimeView = findViewById(R.id.maghrib_time)
+        ishaTimeView = findViewById(R.id.isha_time)
 
-        countdownTextView = findViewById(R.id.countdownText)
-        countdownContainer = findViewById(R.id.countdown_container)
+
+        fajrCountdownContainer = findViewById(R.id.fajr_countdown_container)
+        dhuhrCountdownContainer = findViewById(R.id.dzuhur_countdown_container)
+        asrCountdownContainer = findViewById(R.id.asr_countdown_container)
+        maghribCountdownContainer = findViewById(R.id.maghrib_countdown_container)
+        ishaCountdownContainer = findViewById(R.id.isha_countdown_container)
+
+        fajrCountdownTextView = findViewById(R.id.fajr_countdown_text)
+        dhuhrCountdownTextView = findViewById(R.id.dzuhur_countdown_text)
+        asrCountdownTextView = findViewById(R.id.asr_countdown_text)
+        maghribCountdownTextView = findViewById(R.id.maghrib_countdown_text)
+        ishaCountdownTextView = findViewById(R.id.isha_countdown_text)
+
         prayerTimesHelper = PrayerTimesHelper()
+
         val prayerTimes = prayerTimesHelper.getPrayerTimes()
 
-        countdownTextView.setVisibility(View.VISIBLE)
+//        fajrCountdownTextView.setVisibility(View.VISIBLE)
 
         startNextPrayerCountdown()
 
-        val settingsButton = findViewById<ImageView>(R.id.settings_button)
+        val settingsButton = findViewById<ImageButton>(R.id.settings_button)
         settingsButton.requestFocus()
         settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
@@ -109,11 +148,11 @@ class MainActivity : FragmentActivity() {
         val maghribTime = prayerTimesHelper.formatPrayerTime(prayerTimes.maghrib)
         val ishaTime = prayerTimesHelper.formatPrayerTime(prayerTimes.isha)
 
-        fajrTimeTextView.text = fajrTime
-        dhuhrTimeTextView.text = dhuhrTime
-        asrTimeTextView.text = asrTime
-        maghribTimeTextView.text = maghribTime
-        ishaTimeTextView.text = ishaTime
+        fajrTimeView.text = fajrTime
+        dhuhrTimeView.text = dhuhrTime
+        asrTimeView.text = asrTime
+        maghribTimeView.text = maghribTime
+        ishaTimeView.text = ishaTime
 
         val runningText = findViewById<TextView>(R.id.running_text)
         val hadisList = getHadis(this)
@@ -169,56 +208,79 @@ class MainActivity : FragmentActivity() {
 
         val nextPrayerTime = when {
             now < prayerTimes.fajr -> {
-                highlightPrayerTime(fajrLayout)
-                prayerTimes.fajr
+                highlightPrayerTime(itemFajrTimeLayout, fajrTimeTextView, fajrTimeView)
+                fajrCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.fajr, fajrCountdownTextView)
+//                prayerTimes.fajr
             }
             now < prayerTimes.dhuhr -> {
-                highlightPrayerTime(dhuhrLayout)
-                prayerTimes.dhuhr
+                highlightPrayerTime(itemDhuhrTimeLayout, dhuhrTimeTextView, dhuhrTimeView)
+                fajrCountdownContainer.visibility = View.INVISIBLE
+                dhuhrCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.dhuhr, dhuhrCountdownTextView)
+//                prayerTimes.dhuhr
             }
             now < prayerTimes.asr -> {
-                highlightPrayerTime(asrLayout)
-                prayerTimes.asr
+                highlightPrayerTime(itemAsrTimeLayout, asrTimeTextView, asrTimeView)
+                dhuhrCountdownContainer.visibility = View.INVISIBLE
+                asrCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.asr, asrCountdownTextView)
+//                prayerTimes.asr
             }
             now < prayerTimes.maghrib -> {
-                highlightPrayerTime(maghribLayout)
-                prayerTimes.maghrib
+                highlightPrayerTime(itemMaghribTimeLayout, maghribTimeTextView, maghribTimeView)
+                asrCountdownContainer.visibility = View.INVISIBLE
+                maghribCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.maghrib, maghribCountdownTextView)
+//                prayerTimes.maghrib
             }
             now < prayerTimes.isha -> {
-                highlightPrayerTime(ishaLayout)
-                prayerTimes.isha
+                highlightPrayerTime(itemIshaTimeLayout, ishaTimeTextView, ishaTimeView)
+                maghribCountdownContainer.visibility = View.INVISIBLE
+                ishaCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.isha, ishaCountdownTextView)
+//                prayerTimes.isha
             }
             else -> {
-                highlightPrayerTime(fajrLayout)
-                prayerTimes.fajr.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault())
+                highlightPrayerTime(itemFajrTimeLayout, fajrTimeTextView, fajrTimeView)
+                ishaCountdownContainer.visibility = View.INVISIBLE
+                fajrCountdownContainer.visibility = View.VISIBLE
+                NextPrayerTime(prayerTimes.fajr.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault()), fajrCountdownTextView)
+//                prayerTimes.fajr.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault())
             }
         }
 
-        val remainingMillis = nextPrayerTime.toEpochMilliseconds() - now.toEpochMilliseconds()
-        startCountdown(remainingMillis)
+        val remainingMillis = nextPrayerTime.prayerTime.toEpochMilliseconds() - now.toEpochMilliseconds()
+        startCountdown(remainingMillis, nextPrayerTime.prayerCountdownText)
     }
 
-    private fun highlightPrayerTime(activeLayout: LinearLayout,) {
+    private fun highlightPrayerTime(
+        activeLayout: LinearLayout,
+        textPrayerTimeName: TextView,
+        textPrayerTime: TextView
+    ) {
         // Ubah warna layout aktif
-        activeLayout.setBackgroundResource(R.drawable.fajr_bacground)
+        activeLayout.setBackgroundResource(R.drawable.card_item_selected_background)
+        textPrayerTimeName.setTextColor(Color.WHITE)
+        textPrayerTime.setTextColor(Color.WHITE)
     }
 
     private var countdownTimer: CountDownTimer? = null
 
-    private fun startCountdown(durationMillis: Long) {
+    private fun startCountdown(durationMillis: Long, prayerCountdownText: TextView) {
         countdownTimer?.cancel()
         countdownTimer = object : CountDownTimer(durationMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val hours = millisUntilFinished / (1000 * 60 * 60)
                 val minutes = (millisUntilFinished / (1000 * 60)) % 60
                 val seconds = (millisUntilFinished / 1000) % 60
-                countdownTextView.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                prayerCountdownText.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
 //                updateCountdown(isCountdownActive = true, countdownValue = countdownValue)
             }
 
             override fun onFinish() {
 //                updateCountdown(isCountdownActive = false, countdownValue = "")
-                countdownTextView.text = "Waktu salat telah tiba!"
+                prayerCountdownText.text = "Waktu salat telah tiba!"
                 startNextPrayerCountdown()
             }
         }.start()
@@ -232,12 +294,14 @@ class MainActivity : FragmentActivity() {
 //            countdownContainer.visibility = View.GONE
 //        }
 //    }
-
     private fun startDigitalClock() {
         clockRunnable = object : Runnable {
             override fun run() {
-                val currentTime = Calendar.getInstance().time
+                val calendar = Calendar.getInstance(TimeZoneJv.getTimeZone("GMT+7"))
+                val currentTime = calendar.time
                 val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                // Set zona waktu Indonesia (WIB)
+                timeFormat.timeZone = TimeZoneJv.getTimeZone("GMT+7")
                 timeTextView.text = timeFormat.format(currentTime)
                 clockHandler.postDelayed(this, 1000)
             }
