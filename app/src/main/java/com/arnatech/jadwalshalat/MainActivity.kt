@@ -3,6 +3,7 @@ package com.arnatech.jadwalshalat
 import ImageSliderAdapter
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -10,14 +11,19 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
+import com.arnatech.jadwalshalat.deviceRepository.DeviceRepository
 import com.arnatech.jadwalshalat.models.NextPrayerTime
 import com.arnatech.jadwalshalat.utils.PrayerTimesHelper
+import com.arnatech.jadwalshalat.utils.QRCodeGenerator
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import getHadis
+import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import java.text.SimpleDateFormat
@@ -30,6 +36,10 @@ class MainActivity : FragmentActivity() {
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
     private var currentPosition = 0
+
+    private lateinit var repository: DeviceRepository
+    private lateinit var qrImageView: ImageView
+    private lateinit var deviceIdTextView: TextView
 
     private lateinit var timeTextView: TextView
 
@@ -84,6 +94,20 @@ class MainActivity : FragmentActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        deviceIdTextView = findViewById(R.id.deviceIdTextView)
+        qrImageView = findViewById(R.id.qrImageView)
+
+        repository = DeviceRepository(this)
+
+        lifecycleScope.launch {
+            val deviceId = repository.getOrCreateDeviceId()
+            deviceIdTextView.text = "Device ID: $deviceId"
+
+            val qrCodeBitmap: Bitmap = QRCodeGenerator.generateQRCode(deviceId, 512, 512)
+            qrImageView.setImageBitmap(qrCodeBitmap)
+        }
 
         fajrLayout = findViewById(R.id.fajr_time_layout)
         dhuhrLayout = findViewById(R.id.dzuhur_time_layout)
