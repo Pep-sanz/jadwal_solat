@@ -170,9 +170,11 @@ class MainActivity : FragmentActivity() {
 //                            Log.i("MOSQUE:", deviceData.mosque?.name ?: "ERROR")
                             setMosque(deviceData)
                             setBackgroundImage(deviceData)
-                            setPrayerSchedule(deviceData)
-                            startNextPrayerCountdown()
                             setTextMarquee(deviceData)
+                            setPrayerSchedule(deviceData)
+
+                            startNextPrayerCountdown()
+
                         }
                         is Result.Error -> {
 //                            binding?.progressBar?.visibility = View.GONE
@@ -223,7 +225,7 @@ class MainActivity : FragmentActivity() {
 
     private fun setBackgroundImage(deviceData: DeviceResponse) {
         if (deviceData.sliders != null) {
-            val imgList = deviceData.sliders.map { data -> data?.backgroundImage ?: "" }
+            val imgList = deviceData.sliders.map { data -> data?.backgroundImage?.url ?: "" }
             viewPager.adapter = ImageSliderAdapter(imgList)
             handler = Handler(Looper.getMainLooper())
             runnable = object : Runnable {
@@ -241,17 +243,17 @@ class MainActivity : FragmentActivity() {
 
     private fun setPrayerSchedule(deviceData: DeviceResponse) {
 //        Log.i("MOSQUE:", deviceData.mosque?.name ?: "ERROR")
-        fajrTimeData = toInstant(deviceData.prayerSchedule?.fajr ?: "00:00")
-        dhuhrTimeData = toInstant(deviceData.prayerSchedule?.dhuhr ?: "00:00")
-        asrTimeData = toInstant(deviceData.prayerSchedule?.asr ?: "00:00")
-        maghribTimeData = toInstant(deviceData.prayerSchedule?.maghrib ?: "00:00")
-        ishaTimeData = toInstant(deviceData.prayerSchedule?.isha ?: "00:00")
+        fajrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.fajr ?: "00:00")
+        dhuhrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.dhuhr ?: "00:00")
+        asrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.asr ?: "00:00")
+        maghribTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.maghrib ?: "00:00")
+        ishaTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.isha ?: "00:00")
 
-        fajrTimeView.text = deviceData.prayerSchedule?.fajr ?: "00:00"
-        dhuhrTimeView.text = deviceData.prayerSchedule?.dhuhr ?: "00:00"
-        asrTimeView.text = deviceData.prayerSchedule?.asr ?: "00:00"
-        maghribTimeView.text = deviceData.prayerSchedule?.maghrib ?: "00:00"
-        ishaTimeView.text = deviceData.prayerSchedule?.isha ?: "00:00"
+        fajrTimeView.text = deviceData.prayerSchedule?.get(0)?.fajr ?: "00:00"
+        dhuhrTimeView.text = deviceData.prayerSchedule?.get(0)?.dhuhr ?: "00:00"
+        asrTimeView.text = deviceData.prayerSchedule?.get(0)?.asr ?: "00:00"
+        maghribTimeView.text = deviceData.prayerSchedule?.get(0)?.maghrib ?: "00:00"
+        ishaTimeView.text = deviceData.prayerSchedule?.get(0)?.isha ?: "00:00"
     }
 
     private fun setTextMarquee(deviceData: DeviceResponse) {
