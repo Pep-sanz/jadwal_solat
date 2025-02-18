@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="QrSettingAttrs">
+        <attr name="qrSettingBackgroundColor" format="color" />
+        <attr name="deviceIdTextColor" format="color" />
+    </declare-styleable>
+</resources>

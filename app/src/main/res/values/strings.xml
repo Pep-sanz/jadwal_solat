@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">jadwal shalat</string>
-    <string name="mosque_name">Masjid An-Nur</string>
-    <string name="location">Jl. Pegangsaan Timur No.56, Jakarta Pusat</string>
+    <string name="mosque_name">Nama Mesjid</string>
+    <string name="location">Alamat Mesjid</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>
     <string name="personal_settings">Personal Settings</string>
@@ -17,4 +17,7 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_qr_setting">QrSettingActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

@@ -44,4 +44,15 @@
         <item name="colorPrimaryDark">@color/blue_secondary</item>
         <item name="android:colorBackground">@color/blue_background</item>
     </style>
+
+    <style name="AppTheme.Cyan.Fullscreen" parent="AppTheme.Cyan">
+        <item name="android:actionBarStyle">@style/Widget.AppTheme.Cyan.ActionBar.Fullscreen</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="ThemeOverlay.JadwalShalat.QrSettingContainer" parent="">
+        <item name="qrSettingBackgroundColor">@color/white</item>
+        <item name="deviceIdTextColor">@color/black_dark</item>
+    </style>
 </resources>

@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="ThemeOverlay.JadwalShalat.QrSettingContainer" parent="">
+        <item name="qrSettingBackgroundColor">@color/black</item>
+        <item name="deviceIdTextColor">@color/white</item>
+    </style>
+</resources>
