@@ -25,7 +25,7 @@
 
             <!-- Bagian Kiri -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="400dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:background="@drawable/border_bottom_right"
@@ -45,6 +45,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/mosque_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/mosque_name"
@@ -53,6 +54,7 @@
                         android:textSize="26.33sp" />
 
                     <TextView
+                        android:id="@+id/mosque_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
@@ -121,21 +123,6 @@
             android:paddingEnd="14dp"
             android:descendantFocusability="beforeDescendants">
 
-            <TextView
-                android:id="@+id/deviceIdTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Device ID: Loading..."
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="16dp" />
-
-            <ImageView
-                android:id="@+id/qrImageView"
-                android:layout_width="250dp"
-                android:layout_height="250dp" />
-
-
             <ImageButton
                 android:id="@+id/settings_button"
                 android:src="@drawable/setting_ic"
@@ -171,10 +158,11 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/wrap_fajr"
                         android:layout_width="match_parent"
                         android:layout_height="139dp"
+                        android:orientation="vertical"
                         >
                         <!-- Countdown Timer -->
                         <LinearLayout
@@ -204,10 +192,9 @@
                         <LinearLayout
                             android:id="@+id/item_fajr_time_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:background="@drawable/card_item_unselected_background"
-                            android:layout_below="@id/fajr_countdown_container"
                             android:orientation="vertical">
 
                             <TextView
@@ -225,13 +212,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="04:01"
+                                android:text="00:00"
                                 android:textColor="?attr/colorPrimaryDark"
                                 android:textSize="46sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -242,10 +229,11 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/wrap_dzuhur"
                         android:layout_width="match_parent"
                         android:layout_height="139dp"
+                        android:orientation="vertical"
                         >
                         <!-- Countdown Timer -->
                         <LinearLayout
@@ -275,10 +263,9 @@
                         <LinearLayout
                             android:id="@+id/item_dzuhur_time_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:background="@drawable/card_item_unselected_background"
-                            android:layout_below="@id/dzuhur_countdown_container"
                             android:orientation="vertical">
 
                             <TextView
@@ -296,13 +283,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="04:01"
+                                android:text="00:00"
                                 android:textColor="?attr/colorPrimaryDark"
                                 android:textSize="46sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -313,10 +300,11 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/wrap_asr"
                         android:layout_width="match_parent"
                         android:layout_height="139dp"
+                        android:orientation="vertical"
                         >
                         <!-- Countdown Timer -->
                         <LinearLayout
@@ -346,10 +334,9 @@
                         <LinearLayout
                             android:id="@+id/item_asr_time_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:background="@drawable/card_item_unselected_background"
-                            android:layout_below="@id/asr_countdown_container"
                             android:orientation="vertical">
 
                             <TextView
@@ -367,13 +354,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="04:01"
+                                android:text="00:00"
                                 android:textColor="?attr/colorPrimaryDark"
                                 android:textSize="46sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -384,11 +371,12 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/wrap_maghrib"
                         android:layout_width="match_parent"
                         android:layout_height="139dp"
-                        >
+                        android:layout_gravity="bottom"
+                        android:orientation="vertical">
                         <!-- Countdown Timer -->
                         <LinearLayout
                             android:id="@+id/maghrib_countdown_container"
@@ -417,10 +405,9 @@
                         <LinearLayout
                             android:id="@+id/item_maghrib_time_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:background="@drawable/card_item_unselected_background"
-                            android:layout_below="@id/maghrib_countdown_container"
                             android:orientation="vertical">
 
                             <TextView
@@ -438,13 +425,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="04:01"
+                                android:text="00:00"
                                 android:textColor="?attr/colorPrimaryDark"
                                 android:textSize="46sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -455,10 +442,11 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:orientation="vertical">
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/wrap_isha"
                         android:layout_width="match_parent"
                         android:layout_height="139dp"
+                        android:orientation="vertical"
                         >
                         <!-- Countdown Timer -->
                         <LinearLayout
@@ -489,10 +477,9 @@
                         <LinearLayout
                             android:id="@+id/item_isha_time_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
                             android:background="@drawable/card_item_unselected_background"
-                            android:layout_below="@id/isha_countdown_container"
                             android:orientation="vertical">
 
                             <TextView
@@ -510,12 +497,12 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="04:01"
+                                android:text="00:00"
                                 android:textColor="?attr/colorPrimaryDark"
                                 android:textSize="46sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
