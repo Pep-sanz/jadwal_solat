@@ -52,9 +52,10 @@ class DeviceRepository private constructor(
 //            newsDao.deleteAll()
 //            newsDao.insertNews(newsList)
 
-            val response = dummyApi.getContentByDeviceId(deviceId)
-            Log.i("HASIL:", response.mosque?.name ?: "NOL")
-            Log.i("HASIL JADWAL:", response.prayerSchedule?.fajr ?: "NOL")
+//            val response = dummyApi.getContentByDeviceId(deviceId)
+            val response = api.getContentByDeviceId(deviceId)
+//            Log.i("HASIL:", response.mosque?.name ?: "NOL")
+//            Log.i("HASIL JADWAL:", response.prayerSchedule?.fajr ?: "NOL")
             val dummyResponse: LiveData<Result<DeviceResponse>> = MutableLiveData(Result.Success(response))
             emitSource(dummyResponse)
         } catch (e: Exception) {
