@@ -6,7 +6,7 @@ data class DeviceResponse(
 	val mosque: Mosque? = null,
 
 	@field:SerializedName("prayer_schedule")
-	val prayerSchedule: PrayerSchedule? = null,
+	val prayerSchedule: List<PrayerScheduleItem?>? = null,
 
 	val sliders: List<SlidersItem?>? = null,
 
@@ -24,7 +24,7 @@ data class Mosque(
 	val longitude: Any? = null
 )
 
-data class PrayerSchedule(
+data class PrayerScheduleItem(
 	val date: String? = null,
 	val asr: String? = null,
 	val sunrise: String? = null,
@@ -34,9 +34,18 @@ data class PrayerSchedule(
 	val maghrib: String? = null
 )
 
+data class BackgroundImage(
+	val name: String? = null,
+	val id: Int? = null,
+	val url: String? = null,
+
+	@field:SerializedName("file_size")
+	val fileSize: Int? = null
+)
+
 data class SlidersItem(
 	@field:SerializedName("background_image")
-	val backgroundImage: String? = null,
+	val backgroundImage: BackgroundImage? = null,
 
 	val mosque: Int? = null,
 
