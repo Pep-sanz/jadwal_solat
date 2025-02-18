@@ -1,0 +1,62 @@
+{
+  "mosque": {
+    "name": "Mesjid An-najah",
+    "address": "Jl. Ahmad Yani No.25, Pakuwon, Kec. Garut Kota, Kabupaten Garut, Jawa Barat 44117",
+    "latitude": -7.2156651,
+    "longitude": 107.9015837
+  },
+  "prayer_schedule": {
+    "date": "",
+    "fajr":"04:41",
+    "sunrise":"05:45",
+    "dhuhr":"12:04",
+    "asr":"15:16",
+    "maghrib":"18:13",
+    "isha":"19:20"
+  },
+  "sliders": [
+    {
+      "id": 1,
+      "mosque": 10,
+      "background_image": "https://wallpapersok.com/images/high/place-of-worship-makkah-hd-tx6ds8bulvglpcrr.jpg",
+      "text": "",
+      "created_at": "2025-01-01T09:15:00"
+    },
+    {
+      "id": 2,
+      "mosque": 10,
+      "background_image": "https://i0.wp.com/www.nabawimulia.co.id/wp-content/uploads/2024/08/madinah.webp",
+      "text": "",
+      "created_at": "2025-01-01T09:16:00"
+    }
+  ],
+  "text_marquee": [
+    {
+      "id": 1,
+      "mosque": 10,
+      "text": "Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.",
+      "created_at": "2025-01-01T09:18:00"
+    },
+    {
+      "id": 2,
+      "mosque": 10,
+      "text": "Barangsiapa beriman kepada Allah dan hari akhir, maka berkatalah yang baik atau diam.",
+      "created_at": "2025-01-01T09:19:00"
+    },
+    {
+      "id": 3,
+      "mosque": 10,
+      "text": "Sesungguhnya Allah menyukai jika seseorang melakukan pekerjaan dengan itqan (tepat dan sempurna).",
+      "created_at": "2025-01-01T09:20:00"
+    }
+  ],
+  "configurations": {
+    "id": 100,
+    "mosque": 10,
+    "max_sliders": 2,
+    "max_text_marquee": 3,
+    "prayer_duration_days": 7,
+    "allow_calendar_access": true,
+    "created_at": "2025-01-01T09:10:00"
+  }
+}
