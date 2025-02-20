@@ -10,6 +10,7 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -48,6 +49,8 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var mosqueName: TextView
     private lateinit var mosqueAddress: TextView
+
+    private lateinit var settingsButton: ImageButton
 
     private lateinit var fajrCountdownContainer: View
     private lateinit var dhuhrCountdownContainer: View
@@ -188,12 +191,11 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        val settingsButton = findViewById<ImageButton>(R.id.settings_button)
-        settingsButton.requestFocus()
-        settingsButton.setOnClickListener {
-            val intent = Intent(this, QrSettingActivity::class.java)
-            startActivity(intent)
-        }
+        settingsButton = findViewById(R.id.settings_button)
+//        settingsButton.setOnClickListener {
+//            val intent = Intent(this, QrSettingActivity::class.java)
+//            startActivity(intent)
+//        }
 
         val dateTextView: TextView = findViewById(R.id.dateTextView)
         val masehiDateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
@@ -215,6 +217,30 @@ class MainActivity : FragmentActivity() {
         dateTextView.text = combinedDate
 
         startDigitalClock()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
+                settingsButton.visibility = View.VISIBLE
+                settingsButton.requestFocus()
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
+                settingsButton.visibility = View.INVISIBLE
+                val intent = Intent(this, QrSettingActivity::class.java)
+                startActivity(intent)
+
+                true
+            }
+            else -> super.onKeyUp(keyCode, event)
+        }
     }
 
     private fun setMosque(deviceData: DeviceData) {
