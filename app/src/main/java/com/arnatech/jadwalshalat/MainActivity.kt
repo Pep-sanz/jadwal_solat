@@ -22,7 +22,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.arnatech.jadwalshalat.factory.ViewModelFactory
 import com.arnatech.jadwalshalat.models.NextPrayerTime
 import com.arnatech.jadwalshalat.data.Result
-import com.arnatech.jadwalshalat.data.remote.response.DeviceResponse
+import com.arnatech.jadwalshalat.models.DeviceData
 import com.arnatech.jadwalshalat.utils.toInstant
 import com.arnatech.jadwalshalat.viewmodel.DeviceViewModel
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
@@ -166,8 +166,7 @@ class MainActivity : FragmentActivity() {
                         is Result.Loading -> {
                         }
                         is Result.Success -> {
-                            val deviceData = result.data
-//                            Log.i("MOSQUE:", deviceData.mosque?.name ?: "ERROR")
+                            val deviceData: DeviceData = result.data
                             setMosque(deviceData)
                             setBackgroundImage(deviceData)
                             setTextMarquee(deviceData)
@@ -218,12 +217,12 @@ class MainActivity : FragmentActivity() {
         startDigitalClock()
     }
 
-    private fun setMosque(deviceData: DeviceResponse) {
+    private fun setMosque(deviceData: DeviceData) {
         mosqueName.text = deviceData.mosque?.name ?: "Nama Mesjid"
         mosqueAddress.text = deviceData.mosque?.address ?: "Alamat Mesjid"
     }
 
-    private fun setBackgroundImage(deviceData: DeviceResponse) {
+    private fun setBackgroundImage(deviceData: DeviceData) {
         if (deviceData.sliders != null) {
             val imgList = deviceData.sliders.map { data -> data?.backgroundImage?.url ?: "" }
             viewPager.adapter = ImageSliderAdapter(imgList)
@@ -241,7 +240,7 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun setPrayerSchedule(deviceData: DeviceResponse) {
+    private fun setPrayerSchedule(deviceData: DeviceData) {
 //        Log.i("MOSQUE:", deviceData.mosque?.name ?: "ERROR")
         fajrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.fajr ?: "00:00")
         dhuhrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.dhuhr ?: "00:00")
@@ -256,7 +255,7 @@ class MainActivity : FragmentActivity() {
         ishaTimeView.text = deviceData.prayerSchedule?.get(0)?.isha ?: "00:00"
     }
 
-    private fun setTextMarquee(deviceData: DeviceResponse) {
+    private fun setTextMarquee(deviceData: DeviceData) {
         val runningTextResult = (deviceData.textMarquee?.map { data -> data?.text } ?: listOf("", "")).joinToString("   <>   ")
         textMarquee.text = runningTextResult
         textMarquee.isSelected = true
