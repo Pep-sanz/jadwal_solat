@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arnatech.jadwalshalat.data.DeviceRepository
+import com.arnatech.jadwalshalat.data.Result
+import com.arnatech.jadwalshalat.models.DeviceData
 import kotlinx.coroutines.launch
 
 class DeviceViewModel(private val deviceRepository: DeviceRepository) : ViewModel() {
@@ -18,5 +20,5 @@ class DeviceViewModel(private val deviceRepository: DeviceRepository) : ViewMode
         }
     }
 
-    fun getDeviceData(deviceId: String) = deviceRepository.getDeviceData(deviceId)
+    fun getDeviceData(deviceId: String): LiveData<Result<DeviceData>> = deviceRepository.getDeviceData(deviceId)
 }
