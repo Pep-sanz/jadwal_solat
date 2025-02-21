@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background ProgressBar -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/primary" /> <!-- Warna latar belakang -->
+            <corners android:radius="25dp"/> <!-- Membulatkan sudut -->
+        </shape>
+    </item>
+
+    <!-- Foreground ProgressBar (Progress utama) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="#FFFFFF" /> <!-- Warna progress -->
+                <corners android:radius="25dp"/> <!-- Membulatkan sudut -->
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>
