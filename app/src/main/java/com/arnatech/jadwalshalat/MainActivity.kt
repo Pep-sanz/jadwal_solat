@@ -20,10 +20,10 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import com.arnatech.jadwalshalat.factory.ViewModelFactory
 import com.arnatech.jadwalshalat.models.NextPrayerTime
 import com.arnatech.jadwalshalat.data.Result
 import com.arnatech.jadwalshalat.models.DeviceData
+import com.arnatech.jadwalshalat.sharedviewmodel.PrayerScheduleApplication
 import com.arnatech.jadwalshalat.utils.toInstant
 import com.arnatech.jadwalshalat.viewmodel.DeviceViewModel
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
@@ -111,10 +111,12 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        timeTextView = findViewById(R.id.timeTextView)
+
         mosqueName = findViewById(R.id.mosque_name)
         mosqueAddress = findViewById(R.id.mosque_address)
 
-        timeTextView = findViewById(R.id.timeTextView)
+        settingsButton = findViewById(R.id.settings_button)
 
         fajrLayout = findViewById(R.id.fajr_time_layout)
         dhuhrLayout = findViewById(R.id.dzuhur_time_layout)
@@ -158,44 +160,36 @@ class MainActivity : FragmentActivity() {
         viewPager = findViewById(R.id.viewPager)
         textMarquee = findViewById(R.id.running_text)
 
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(this)
-        val viewModel: DeviceViewModel = ViewModelProvider(this, factory)[DeviceViewModel::class.java]
+        val factory = (application as PrayerScheduleApplication).getViewModelFactory()
+        val viewModel: DeviceViewModel = ViewModelProvider(application as PrayerScheduleApplication, factory)[DeviceViewModel::class.java]
 
         viewModel.getOrCreateDeviceId()
-        viewModel.deviceId.observe(this@MainActivity) { deviceId ->
-            viewModel.getDeviceData(deviceId).observe(this@MainActivity) { result ->
-                if (result != null) {
-                    when (result) {
-                        is Result.Loading -> {
-                        }
-                        is Result.Success -> {
-                            val deviceData: DeviceData = result.data
-                            setMosque(deviceData)
-                            setBackgroundImage(deviceData)
-                            setTextMarquee(deviceData)
-                            setPrayerSchedule(deviceData)
-
-                            startNextPrayerCountdown()
-
-                        }
-                        is Result.Error -> {
+        viewModel.deviceId.observe(this) { deviceId ->
+            viewModel.getDeviceData(this, deviceId)
+        }
+        viewModel.deviceData.observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                    }
+                    is Result.Success -> {
+                        val deviceData: DeviceData = result.data
+                        setMosque(deviceData)
+                        setBackgroundImage(deviceData)
+                        setTextMarquee(deviceData)
+                        setPrayerSchedule(deviceData)
+                    }
+                    is Result.Error -> {
 //                            binding?.progressBar?.visibility = View.GONE
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Terjadi kesalahan" + result.error,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Terjadi kesalahan" + result.error,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
         }
-
-        settingsButton = findViewById(R.id.settings_button)
-//        settingsButton.setOnClickListener {
-//            val intent = Intent(this, QrSettingActivity::class.java)
-//            startActivity(intent)
-//        }
 
         val dateTextView: TextView = findViewById(R.id.dateTextView)
         val masehiDateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
@@ -266,19 +260,25 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun setPrayerSchedule(deviceData: DeviceData) {
-//        Log.i("MOSQUE:", deviceData.mosque?.name ?: "ERROR")
-        fajrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.fajr ?: "00:00")
-        dhuhrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.dhuhr ?: "00:00")
-        asrTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.asr ?: "00:00")
-        maghribTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.maghrib ?: "00:00")
-        ishaTimeData = toInstant(deviceData.prayerSchedule?.get(0)?.isha ?: "00:00")
+//        Log.i("JADWAL SHOLAT 1:", "${deviceData.prayerSchedule}")
+//        Log.i("JADWAL SHOLAT 2:", "${deviceData.prayerSchedule.isNullOrEmpty()}")
+        if (!deviceData.prayerSchedule.isNullOrEmpty()) {
+            fajrTimeData = toInstant(deviceData.prayerSchedule[0].fajr ?: "00:00")
+            dhuhrTimeData = toInstant(deviceData.prayerSchedule[0].dhuhr ?: "00:00")
+            asrTimeData = toInstant(deviceData.prayerSchedule[0].asr ?: "00:00")
+            maghribTimeData = toInstant(deviceData.prayerSchedule[0].maghrib ?: "00:00")
+            ishaTimeData = toInstant(deviceData.prayerSchedule[0].isha ?: "00:00")
 
-        fajrTimeView.text = deviceData.prayerSchedule?.get(0)?.fajr ?: "00:00"
-        dhuhrTimeView.text = deviceData.prayerSchedule?.get(0)?.dhuhr ?: "00:00"
-        asrTimeView.text = deviceData.prayerSchedule?.get(0)?.asr ?: "00:00"
-        maghribTimeView.text = deviceData.prayerSchedule?.get(0)?.maghrib ?: "00:00"
-        ishaTimeView.text = deviceData.prayerSchedule?.get(0)?.isha ?: "00:00"
+            fajrTimeView.text = deviceData.prayerSchedule[0].fajr ?: "00:00"
+            dhuhrTimeView.text = deviceData.prayerSchedule[0].dhuhr ?: "00:00"
+            asrTimeView.text = deviceData.prayerSchedule[0].asr ?: "00:00"
+            maghribTimeView.text = deviceData.prayerSchedule[0].maghrib ?: "00:00"
+            ishaTimeView.text = deviceData.prayerSchedule[0].isha ?: "00:00"
+
+            startNextPrayerCountdown()
+        }
     }
 
     private fun setTextMarquee(deviceData: DeviceData) {
