@@ -1,5 +1,6 @@
 package com.arnatech.jadwalshalat.viewmodel
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,9 @@ class DeviceViewModel(private val deviceRepository: DeviceRepository) : ViewMode
     private val _deviceId = MutableLiveData<String>()
     val deviceId: LiveData<String> = _deviceId
 
+    private val _deviceData = MutableLiveData<Result<DeviceData>>()
+    val deviceData: LiveData<Result<DeviceData>> = _deviceData
+
     fun getOrCreateDeviceId() {
         viewModelScope.launch {
             val localDeviceId = deviceRepository.getOrCreateDeviceId()
@@ -20,5 +24,10 @@ class DeviceViewModel(private val deviceRepository: DeviceRepository) : ViewMode
         }
     }
 
-    fun getDeviceData(deviceId: String): LiveData<Result<DeviceData>> = deviceRepository.getDeviceData(deviceId)
+    fun getDeviceData(owner: LifecycleOwner, deviceId: String) {
+        val localDeviceData = deviceRepository.getDeviceData(deviceId)
+        localDeviceData.observe(owner) { result ->
+            _deviceData.value = result
+        }
+    }
 }
