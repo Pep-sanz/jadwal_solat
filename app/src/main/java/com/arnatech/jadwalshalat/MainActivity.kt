@@ -102,6 +102,8 @@ class MainActivity : FragmentActivity() {
     private val clockHandler = Handler(Looper.getMainLooper())
     private lateinit var clockRunnable: Runnable
 
+    private lateinit var iqamahOverlayView: LinearLayout
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
@@ -159,6 +161,8 @@ class MainActivity : FragmentActivity() {
 
         viewPager = findViewById(R.id.viewPager)
         textMarquee = findViewById(R.id.running_text)
+
+        iqamahOverlayView = findViewById(R.id.iqamah_overlay_view)
 
         val factory = (application as PrayerScheduleApplication).getViewModelFactory()
         val viewModel: DeviceViewModel = ViewModelProvider(application as PrayerScheduleApplication, factory)[DeviceViewModel::class.java]
