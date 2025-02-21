@@ -1,10 +1,29 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="1845dp"
-    android:height="324dp"
-    android:viewportWidth="1845"
-    android:viewportHeight="124">
-  <path
-      android:pathData="M18,71C18,37.9 44.9,11 78,11H1767C1800.1,11 1827,37.9 1827,71V269C1827,285.6 1813.6,299 1797,299H48C31.4,299 18,285.6 18,269V71Z"
-      android:fillColor="#333333"
-      android:fillAlpha="0.24"/>
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Efek blur dan transparan -->
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="#D6000000" /> <!-- Putih transparan (50%) -->
+    </shape>
+  </item>
+
+  <!-- Highlight atas untuk efek kaca -->
+  <item>
+    <shape android:shape="rectangle">
+      <gradient
+          android:angle="90"
+          android:startColor="#09000000"
+          android:endColor="#00FFFFFF" />
+    </shape>
+  </item>
+
+  <!-- Shadow bawah untuk efek floating -->
+  <item>
+    <shape android:shape="rectangle">
+      <solid android:color="#10000000" />
+    </shape>
+    <padding android:top="4dp" android:left="2dp" android:right="2dp" android:bottom="6dp"/>
+  </item>
+
+</layer-list>
