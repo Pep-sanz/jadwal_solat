@@ -11,11 +11,16 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +31,8 @@ import com.arnatech.jadwalshalat.models.DeviceData
 import com.arnatech.jadwalshalat.sharedviewmodel.PrayerScheduleApplication
 import com.arnatech.jadwalshalat.utils.toInstant
 import com.arnatech.jadwalshalat.viewmodel.DeviceViewModel
+import com.arnatech.jadwalshalat.viewmodel.PopupIqamahViewModel
+import com.arnatech.jadwalshalat.viewmodel.PopupKhutbahViewModel
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimePeriod
@@ -39,11 +46,23 @@ import java.util.Locale
 import java.util.TimeZone as TimeZoneJv
 
 class MainActivity : FragmentActivity() {
+    private lateinit var rootLayout: FrameLayout
 
     private lateinit var viewPager: ViewPager2
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
     private var currentPosition = 0
+
+    private val popupIqamahViewModel: PopupIqamahViewModel by viewModels()
+    private val popupKhutbahViewModel: PopupKhutbahViewModel by viewModels()
+
+    private val iqamahHandler = Handler(Looper.getMainLooper())
+    private var iqamahCountdownTime = 480 // 8 menit dalam detik
+    private lateinit var iqamahRunnable: Runnable
+
+    private val khutbahHandler = Handler(Looper.getMainLooper())
+    private var khutbahCountdownTime = 2700 // 45 menit dalam detik
+    private lateinit var khutbahRunnable: Runnable
 
     private lateinit var timeTextView: TextView
 
@@ -102,8 +121,6 @@ class MainActivity : FragmentActivity() {
     private val clockHandler = Handler(Looper.getMainLooper())
     private lateinit var clockRunnable: Runnable
 
-    private lateinit var iqamahOverlayView: LinearLayout
-
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
@@ -112,6 +129,8 @@ class MainActivity : FragmentActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        rootLayout = findViewById(R.id.main_browse_fragment)
 
         timeTextView = findViewById(R.id.timeTextView)
 
@@ -162,7 +181,26 @@ class MainActivity : FragmentActivity() {
         viewPager = findViewById(R.id.viewPager)
         textMarquee = findViewById(R.id.running_text)
 
-        iqamahOverlayView = findViewById(R.id.iqamah_overlay_view)
+        val dateTextView: TextView = findViewById(R.id.dateTextView)
+        val masehiDateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
+        val currentDate = masehiDateFormat.format(Date())
+
+        val hijriMonths = arrayOf(
+            "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir",
+            "Jumadil Awal", "Jumadil Akhir", "Rajab", "Syaban",
+            "Ramadhan", "Syawal", "Zulqaidah", "Zulhijjah"
+        )
+        val hijriCalendar = UmmalquraCalendar()
+        val hijriYear = hijriCalendar.get(UmmalquraCalendar.YEAR)
+        val hijriMonthIndex = hijriCalendar.get(UmmalquraCalendar.MONTH)
+        val hijriDay = hijriCalendar.get(UmmalquraCalendar.DAY_OF_MONTH)
+        val hijriMonth = hijriMonths[hijriMonthIndex]
+        val hijriDate = "$hijriDay $hijriMonth $hijriYear H"
+
+        val combinedDate = "$currentDate\n$hijriDate"
+        dateTextView.text = combinedDate
+
+        startDigitalClock()
 
         val factory = (application as PrayerScheduleApplication).getViewModelFactory()
         val viewModel: DeviceViewModel = ViewModelProvider(application as PrayerScheduleApplication, factory)[DeviceViewModel::class.java]
@@ -195,26 +233,23 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        val dateTextView: TextView = findViewById(R.id.dateTextView)
-        val masehiDateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
-        val currentDate = masehiDateFormat.format(Date())
-
-        val hijriMonths = arrayOf(
-            "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir",
-            "Jumadil Awal", "Jumadil Akhir", "Rajab", "Syaban",
-            "Ramadhan", "Syawal", "Zulqaidah", "Zulhijjah"
-        )
-        val hijriCalendar = UmmalquraCalendar()
-        val hijriYear = hijriCalendar.get(UmmalquraCalendar.YEAR)
-        val hijriMonthIndex = hijriCalendar.get(UmmalquraCalendar.MONTH)
-        val hijriDay = hijriCalendar.get(UmmalquraCalendar.DAY_OF_MONTH)
-        val hijriMonth = hijriMonths[hijriMonthIndex]
-        val hijriDate = "$hijriDay $hijriMonth $hijriYear H"
-
-        val combinedDate = "$currentDate\n$hijriDate"
-        dateTextView.text = combinedDate
-
-        startDigitalClock()
+        // Observer untuk LiveData (Menampilkan popup ketika state berubah)
+        popupIqamahViewModel.showPopupIqamah.observe(this) { shouldShow ->
+            if (shouldShow) {
+                rootLayout.post {
+                    showPopupIqamah(rootLayout)
+                }
+                popupIqamahViewModel.resetPopupIqamahState() // Reset state agar tidak muncul berulang
+            }
+        }
+        popupKhutbahViewModel.showPopupKhutbah.observe(this) { shouldShow ->
+            if (shouldShow) {
+                rootLayout.post {
+                    showPopupKhutbah(rootLayout)
+                }
+                popupKhutbahViewModel.resetPopupKhutbahState()
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -241,6 +276,94 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    private fun showPopupIqamah(view: View) {
+        val inflater = LayoutInflater.from(this)
+        val popupView = inflater.inflate(R.layout.popup_iqamah, null)
+
+        val iqamahCountdown = popupView.findViewById<TextView>(R.id.popup_iqamah_countdown)
+        val iqamahProgress = popupView.findViewById<ProgressBar>(R.id.popup_iqamah_progress)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            true
+        )
+
+        popupWindow.elevation = 10f
+
+        // Reset countdown
+        iqamahCountdownTime = 480
+        iqamahCountdown.text = formatTime(iqamahCountdownTime)
+        iqamahProgress.max = 480
+        iqamahProgress.progress = 480
+
+        // Jalankan countdown
+        iqamahRunnable = object : Runnable {
+            override fun run() {
+                iqamahCountdownTime--
+                iqamahCountdown.text = formatTime(iqamahCountdownTime)
+                iqamahProgress.progress = iqamahCountdownTime
+
+                if (iqamahCountdownTime > 0) {
+                    iqamahHandler.postDelayed(this, 1000) // Update setiap 1 detik
+                } else {
+                    popupWindow.dismiss() // Tutup popup setelah countdown selesai
+                }
+            }
+        }
+
+        iqamahHandler.postDelayed(iqamahRunnable, 1000)
+
+        popupWindow.setOnDismissListener {
+            iqamahHandler.removeCallbacks(iqamahRunnable) // Hentikan countdown jika popup ditutup manual
+        }
+
+        // Tampilkan PopupWindow di bawah view yang ditekan
+        popupWindow.showAsDropDown(view, 0, 20)
+    }
+
+    private fun formatTime(seconds: Int): String {
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return String.format("%02d:%02d", minutes, remainingSeconds)
+    }
+
+    private fun showPopupKhutbah(view: View) {
+        val inflater = LayoutInflater.from(this)
+        val popupView = inflater.inflate(R.layout.popup_khutbah, null)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            true
+        )
+
+        popupWindow.elevation = 10f
+
+        khutbahCountdownTime = 2700
+
+        khutbahRunnable = object : Runnable {
+            override fun run() {
+                khutbahCountdownTime--
+
+                if (khutbahCountdownTime > 0) {
+                    khutbahHandler.postDelayed(this, 1000)
+                } else {
+                    popupWindow.dismiss()
+                }
+            }
+        }
+
+        khutbahHandler.postDelayed(khutbahRunnable, 1000)
+
+        popupWindow.setOnDismissListener {
+            khutbahHandler.removeCallbacks(khutbahRunnable)
+        }
+        popupWindow.showAsDropDown(view, 0, 20)
+    }
+
     private fun setMosque(deviceData: DeviceData) {
         mosqueName.text = deviceData.mosque?.name ?: "Nama Mesjid"
         mosqueAddress.text = deviceData.mosque?.address ?: "Alamat Mesjid"
@@ -248,7 +371,7 @@ class MainActivity : FragmentActivity() {
 
     private fun setBackgroundImage(deviceData: DeviceData) {
         if (deviceData.sliders != null) {
-            val imgList = deviceData.sliders.map { data -> data?.backgroundImage?.url ?: "" }
+            val imgList = deviceData.sliders.map { data -> data.backgroundImage?.url ?: "" }
             viewPager.adapter = ImageSliderAdapter(imgList)
             handler = Handler(Looper.getMainLooper())
             runnable = object : Runnable {
@@ -328,7 +451,7 @@ class MainActivity : FragmentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun startNextPrayerCountdown() {
+    private fun startNextPrayerCountdown(): String {
         val now = Clock.System.now()
 
         val nextPrayerTime = when {
@@ -337,47 +460,48 @@ class MainActivity : FragmentActivity() {
                 highlightPrayerTime(itemFajrTimeLayout, fajrTimeTextView, fajrTimeView)
                 ishaCountdownContainer.visibility = View.INVISIBLE
                 fajrCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(fajrTimeData, fajrCountdownTextView)
+                NextPrayerTime("fajr", fajrTimeData, fajrCountdownTextView)
             }
             now < dhuhrTimeData -> {
                 unHighlightPrayerTime(itemFajrTimeLayout, fajrTimeTextView, fajrTimeView)
                 highlightPrayerTime(itemDhuhrTimeLayout, dhuhrTimeTextView, dhuhrTimeView)
                 fajrCountdownContainer.visibility = View.INVISIBLE
                 dhuhrCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(dhuhrTimeData, dhuhrCountdownTextView)
+                NextPrayerTime("dhuhr", dhuhrTimeData, dhuhrCountdownTextView)
             }
             now < asrTimeData -> {
                 unHighlightPrayerTime(itemDhuhrTimeLayout, dhuhrTimeTextView, dhuhrTimeView)
                 highlightPrayerTime(itemAsrTimeLayout, asrTimeTextView, asrTimeView)
                 dhuhrCountdownContainer.visibility = View.INVISIBLE
                 asrCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(asrTimeData, asrCountdownTextView)
+                NextPrayerTime("asr", asrTimeData, asrCountdownTextView)
             }
             now < maghribTimeData -> {
                 unHighlightPrayerTime(itemAsrTimeLayout, asrTimeTextView, asrTimeView)
                 highlightPrayerTime(itemMaghribTimeLayout, maghribTimeTextView, maghribTimeView)
                 asrCountdownContainer.visibility = View.INVISIBLE
                 maghribCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(maghribTimeData, maghribCountdownTextView)
+                NextPrayerTime("maghrib", maghribTimeData, maghribCountdownTextView)
             }
             now < ishaTimeData -> {
                 unHighlightPrayerTime(itemMaghribTimeLayout, maghribTimeTextView, maghribTimeView)
                 highlightPrayerTime(itemIshaTimeLayout, ishaTimeTextView, ishaTimeView)
                 maghribCountdownContainer.visibility = View.INVISIBLE
                 ishaCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(ishaTimeData, ishaCountdownTextView)
+                NextPrayerTime("isha", ishaTimeData, ishaCountdownTextView)
             }
             else -> {
                 unHighlightPrayerTime(itemIshaTimeLayout, ishaTimeTextView, ishaTimeView)
                 highlightPrayerTime(itemFajrTimeLayout, fajrTimeTextView, fajrTimeView)
                 ishaCountdownContainer.visibility = View.INVISIBLE
                 fajrCountdownContainer.visibility = View.VISIBLE
-                NextPrayerTime(fajrTimeData.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault()), fajrCountdownTextView)
+                NextPrayerTime("fajr", fajrTimeData.plus(DateTimePeriod(days = 1), TimeZone.currentSystemDefault()), fajrCountdownTextView)
             }
         }
 
         val remainingMillis = nextPrayerTime.prayerTime.toEpochMilliseconds() - now.toEpochMilliseconds()
         startCountdown(remainingMillis, nextPrayerTime.prayerCountdownText)
+        return nextPrayerTime.prayerName
     }
 
     private var countdownTimer: CountDownTimer? = null
@@ -395,9 +519,26 @@ class MainActivity : FragmentActivity() {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onFinish() {
                 prayerCountdownText.text = ""
-                startNextPrayerCountdown()
+                val currentDayName = getCurrentDayName()
+                val nextPrayerName = startNextPrayerCountdown()
+                Log.i("NEXT PRAYER NAME", nextPrayerName)
+
+                if (currentDayName == "Jumat" && nextPrayerName == "asr") {
+                    popupKhutbahViewModel.triggerPopupKhutbah()
+                } else {
+                    popupIqamahViewModel.triggerPopupIqamah()
+                }
             }
         }.start()
+    }
+
+    private fun getCurrentDayName(): String {
+        val calendar = Calendar.getInstance(TimeZoneJv.getTimeZone("Asia/Jakarta"))
+        val dateFormat = SimpleDateFormat("EEEE", Locale("id", "ID"))
+
+        val dayName = dateFormat.format(calendar.time)
+        Log.i("Hari ini adalah", dayName)
+        return dayName
     }
 
     private val preferenceChangeListener =
