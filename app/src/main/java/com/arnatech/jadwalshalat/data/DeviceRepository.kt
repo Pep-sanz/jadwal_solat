@@ -20,6 +20,7 @@ import com.arnatech.jadwalshalat.models.Mosque
 import com.arnatech.jadwalshalat.models.PrayerSchedule
 import com.arnatech.jadwalshalat.models.Slider
 import com.arnatech.jadwalshalat.models.TextMarquee
+import com.arnatech.jadwalshalat.utils.formatSchedule
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -70,13 +71,13 @@ class DeviceRepository private constructor(
             val prayerScheduleList = response.prayerSchedule?.map { schedule ->
                 PrayerScheduleTable(
                     0,
-                    schedule?.date,
-                    schedule?.asr,
-                    schedule?.sunrise,
-                    schedule?.isha,
-                    schedule?.dhuhr,
-                    schedule?.fajr,
-                    schedule?.maghrib,
+                    formatSchedule(schedule?.date),
+                    formatSchedule(schedule?.asr),
+                    formatSchedule(schedule?.sunrise),
+                    formatSchedule(schedule?.isha),
+                    formatSchedule(schedule?.dhuhr),
+                    formatSchedule(schedule?.fajr),
+                    formatSchedule(schedule?.maghrib),
                 )
             } ?: listOf()
             val sliderList = response.sliders?.map { sliderItem ->
@@ -163,9 +164,7 @@ class DeviceRepository private constructor(
             localTextMarqueeList,
             localConfiguration
         )
-        Log.i("SEBELUM EMIT", "")
         val localDeviceData: LiveData<Result<DeviceData>> = MutableLiveData(Result.Success(deviceData))
-        Log.i("SETELAH EMIT", "")
         emitSource(localDeviceData)
     }
 
