@@ -58,8 +58,8 @@ class DeviceRepository private constructor(
 
         // FETCH & SAVE TO DB
         try {
-//            val response = dummyApi.getContentByDeviceId(deviceId)
-            val response = api.getContentByDeviceId(deviceId)
+            val response = dummyApi.getContentByDeviceId(deviceId)
+//            val response = api.getContentByDeviceId(deviceId)
             val mosqueTable = MosqueTable(
                 0,
                 response.mosque?.name,
