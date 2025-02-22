@@ -598,6 +598,8 @@ class MainActivity : FragmentActivity() {
         countdownTimer?.cancel()
         handler.removeCallbacks(runnable)
         clockHandler.removeCallbacks(clockRunnable)
+        iqamahHandler.removeCallbacks(iqamahRunnable)
+        khutbahHandler.removeCallbacks(khutbahRunnable)
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 }
