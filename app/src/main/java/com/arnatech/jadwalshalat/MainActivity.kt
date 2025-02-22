@@ -3,6 +3,7 @@ package com.arnatech.jadwalshalat
 import ImageSliderAdapter
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -13,8 +14,10 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.ProgressBar
@@ -29,6 +32,7 @@ import com.arnatech.jadwalshalat.models.NextPrayerTime
 import com.arnatech.jadwalshalat.data.Result
 import com.arnatech.jadwalshalat.models.DeviceData
 import com.arnatech.jadwalshalat.sharedviewmodel.PrayerScheduleApplication
+import com.arnatech.jadwalshalat.utils.QRCodeGenerator
 import com.arnatech.jadwalshalat.utils.toInstant
 import com.arnatech.jadwalshalat.viewmodel.DeviceViewModel
 import com.arnatech.jadwalshalat.viewmodel.PopupIqamahViewModel
@@ -208,26 +212,28 @@ class MainActivity : FragmentActivity() {
         viewModel.getOrCreateDeviceId()
         viewModel.deviceId.observe(this) { deviceId ->
             viewModel.getDeviceData(this, deviceId)
-        }
-        viewModel.deviceData.observe(this) { result ->
-            if (result != null) {
-                when (result) {
-                    is Result.Loading -> {
-                    }
-                    is Result.Success -> {
-                        val deviceData: DeviceData = result.data
-                        setMosque(deviceData)
-                        setBackgroundImage(deviceData)
-                        setTextMarquee(deviceData)
-                        setPrayerSchedule(deviceData)
-                    }
-                    is Result.Error -> {
+            viewModel.deviceData.observe(this) { result ->
+                if (result != null) {
+                    when (result) {
+                        is Result.Loading -> {
+                        }
+                        is Result.Success -> {
+                            val deviceData: DeviceData = result.data
+                            setMosque(deviceData)
+                            setBackgroundImage(deviceData)
+                            setTextMarquee(deviceData)
+                            setPrayerSchedule(deviceData, deviceId) {
+                                viewModel.getDeviceData(this, deviceId)
+                            }
+                        }
+                        is Result.Error -> {
 //                            binding?.progressBar?.visibility = View.GONE
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Terjadi kesalahan" + result.error,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Terjadi kesalahan" + result.error,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }
@@ -364,6 +370,42 @@ class MainActivity : FragmentActivity() {
         popupWindow.showAsDropDown(view, 0, 20)
     }
 
+    private fun showPopupQr(view: View, deviceId: String, refreshFn: () -> Unit) {
+        val inflater = LayoutInflater.from(this)
+        val popupView = inflater.inflate(R.layout.popup_qr, null)
+
+        val qrImageView = popupView.findViewById<ImageView>(R.id.popup_qrImageView)
+        val deviceIdTextView = popupView.findViewById<TextView>(R.id.popup_deviceIdTextView)
+        val refreshButton = popupView.findViewById<Button>(R.id.popup_refresh_button)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            true
+        )
+
+        popupWindow.elevation = 10f
+
+        deviceIdTextView.text = "Device ID: $deviceId"
+        val qrCodeBitmap: Bitmap = QRCodeGenerator.generateQRCode(deviceId, 512, 512)
+        qrImageView.setImageBitmap(qrCodeBitmap)
+        refreshButton.visibility = View.VISIBLE
+
+        refreshButton.requestFocus()
+        refreshButton.setOnClickListener {
+            refreshFn()
+            popupWindow.dismiss()
+            Toast.makeText(
+                this,
+                "Refreshing data...",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        popupWindow.showAsDropDown(view, 0, 20)
+    }
+
     private fun setMosque(deviceData: DeviceData) {
         mosqueName.text = deviceData.mosque?.name ?: "Nama Mesjid"
         mosqueAddress.text = deviceData.mosque?.address ?: "Alamat Mesjid"
@@ -388,7 +430,7 @@ class MainActivity : FragmentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun setPrayerSchedule(deviceData: DeviceData) {
+    private fun setPrayerSchedule(deviceData: DeviceData,deviceId: String, refreshFn: () -> Unit) {
 //        Log.i("JADWAL SHOLAT 1:", "${deviceData.prayerSchedule}")
 //        Log.i("JADWAL SHOLAT 2:", "${deviceData.prayerSchedule.isNullOrEmpty()}")
         if (!deviceData.prayerSchedule.isNullOrEmpty()) {
@@ -405,6 +447,8 @@ class MainActivity : FragmentActivity() {
             ishaTimeView.text = deviceData.prayerSchedule[0].isha ?: "00:00"
 
             startNextPrayerCountdown()
+        } else {
+            showPopupQr(rootLayout, deviceId, refreshFn)
         }
     }
 
